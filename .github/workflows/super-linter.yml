@@ -1,0 +1,44 @@
+name: Linting Workflow
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  lint:
+    name: Check Syntax and Lint Code
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Get Node version from package.json
+      id: nvm
+      run: |
+        echo "::set-output name=VERSION::$(jq -r .engines.node package.json)"
+      env:
+        PACKAGE_JSON_PATH: './package.json'
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ steps.nvm.outputs.VERSION }}
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Check TypeScript syntax
+      run: npx tsc --noEmit
+
+    - name: Run Super-Linter
+      uses: github/super-linter@v4
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        DEFAULT_BRANCH: master
+        LINTER_RULES_PATH: .github/linters
+        VALIDATE_ALL_CODEBASE: false
