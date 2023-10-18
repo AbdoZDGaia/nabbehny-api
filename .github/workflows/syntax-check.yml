@@ -1,4 +1,4 @@
-name: Linting Workflow
+name: Syntax Check Workflow
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   lint:
-    name: Check Syntax and Lint Code
+    name: Check Syntax
     runs-on: ubuntu-latest
 
     steps:
@@ -34,11 +34,3 @@ jobs:
 
     - name: Check TypeScript syntax
       run: npx tsc --noEmit
-
-    - name: Run Super-Linter
-      uses: github/super-linter@v4
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        DEFAULT_BRANCH: master
-        LINTER_RULES_PATH: .github/linters
-        VALIDATE_ALL_CODEBASE: false
