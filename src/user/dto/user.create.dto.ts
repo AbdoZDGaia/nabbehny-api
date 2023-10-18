@@ -1,12 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UserResponseDto {
-    constructor() {
-        this.roles = [];
-    }
-
-    @ApiProperty()
-    id: string;
+export class UserCreateDto {
 
     @ApiProperty()
     firstName: string;
@@ -16,6 +10,9 @@ export class UserResponseDto {
 
     @ApiProperty()
     email: string;
+
+    @ApiProperty()
+    password: string;
 
     @ApiProperty()
     roles: string[];
