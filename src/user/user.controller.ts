@@ -1,9 +1,9 @@
-import { Body, Controller, Get, NotFoundException, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, NotFoundException, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserResponseDto } from './dto/user.response.dto';
 import { UserService } from './user.service';
 import { UserCreateDto } from './dto/user.create.dto';
-import { User } from './shemas/user.shema';
+import { Public } from 'src/shared/public.decorator';
 
 @ApiTags('User')
 @Controller('user')
@@ -34,14 +34,7 @@ export class UserController {
         if (!user) {
             throw new NotFoundException('User not found');
         }
-        const result: UserResponseDto = {
-            id: user._id,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            roles: user.roles
-        };
-        return result;
+        return user;
     }
 
     @Get()
@@ -66,19 +59,10 @@ export class UserController {
         if (!users || users.length == 0) {
             throw new NotFoundException('No users were found');
         }
-        const result: UserResponseDto[] = [];
-        users.forEach(user => {
-            result.push({
-                id: user._id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-                roles: user.roles
-            });
-        });
-        return result;
+        return users;
     }
 
+    @Public()
     @Post()
     @ApiResponse({
         status: 201,
@@ -87,13 +71,6 @@ export class UserController {
     })
     async createUser(@Body() user: UserCreateDto): Promise<UserResponseDto> {
         const createdUser = await this.userService.create(user);
-        const result: UserResponseDto = {
-            id: createdUser._id,
-            firstName: createdUser.firstName,
-            lastName: createdUser.lastName,
-            email: createdUser.email,
-            roles: createdUser.roles
-        };
-        return result;
+        return createdUser;
     }
 }

@@ -1,6 +1,8 @@
 import { Controller, Get, InternalServerErrorException } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Public } from 'src/shared/public.decorator';
 
+@Public()
 @Controller('health-check')
 @ApiTags('Health Check')
 export class HealthCheckController {
