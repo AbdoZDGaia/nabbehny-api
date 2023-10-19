@@ -1,9 +1,6 @@
 name: Syntax Check Workflow
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master
