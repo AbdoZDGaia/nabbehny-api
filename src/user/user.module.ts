@@ -4,6 +4,8 @@ import { UserController } from './user.controller';
 import { SharedModule } from 'src/shared/shared.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './shemas/user.shema';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -12,7 +14,13 @@ import { User, UserSchema } from './shemas/user.shema';
       { name: User.name, schema: UserSchema }
     ]),
   ],
-  providers: [UserService],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    UserService
+  ],
   controllers: [UserController],
   exports: [UserService]
 })

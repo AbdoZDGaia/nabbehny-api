@@ -6,7 +6,7 @@ export class UserResponseDto {
     }
 
     @ApiProperty()
-    id: string;
+    _id: string;
 
     @ApiProperty()
     firstName: string;
