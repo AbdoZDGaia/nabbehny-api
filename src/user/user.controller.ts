@@ -1,5 +1,5 @@
 import { Body, Controller, Get, NotFoundException, Param, Post, UseGuards } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserResponseDto } from './dto/user.response.dto';
 import { UserService } from './user.service';
 import { UserCreateDto } from './dto/user.create.dto';
@@ -7,6 +7,7 @@ import { Public } from 'src/shared/public.decorator';
 
 @ApiTags('User')
 @Controller('user')
+@ApiBearerAuth()
 export class UserController {
     constructor(
         private readonly userService: UserService

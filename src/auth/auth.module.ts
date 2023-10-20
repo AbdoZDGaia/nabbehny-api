@@ -8,7 +8,8 @@ import { JwtStrategy } from './jwt.strategy';
 import { UserModule } from 'src/user/user.module';
 import { SharedModule } from 'src/shared/shared.module';
 import { LocalStrategy } from './local.strategy';
-import { Reflector } from '@nestjs/core';
+import { APP_GUARD, Reflector } from '@nestjs/core';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Module({
     imports: [
@@ -30,6 +31,10 @@ import { Reflector } from '@nestjs/core';
         JwtStrategy,
         LocalStrategy,
         Reflector,
+        {
+            provide: APP_GUARD,
+            useClass: JwtAuthGuard,
+        },
     ],
     exports: [],
 })

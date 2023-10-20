@@ -8,7 +8,7 @@ async function bootstrap() {
     .setTitle('Nabbehny')
     .setDescription('Nabbehny API swagger documentation')
     .setVersion('1.0')
-    .addBearerAuth({bearerFormat: 'JWT', type: 'http', scheme: 'bearer', in: 'header', name: 'Authorization'})
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);

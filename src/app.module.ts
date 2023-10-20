@@ -10,11 +10,6 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 @Module({
   imports: [SharedModule, UserModule, AuthModule],
   controllers: [HealthCheckController],
-  providers: [
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
-  ],
+  providers: [],
 })
-export class AppModule {}
+export class AppModule { }
