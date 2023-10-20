@@ -15,10 +15,6 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
     ]),
   ],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
     UserService
   ],
   controllers: [UserController],
