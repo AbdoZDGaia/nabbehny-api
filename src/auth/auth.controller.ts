@@ -28,6 +28,17 @@ export class AuthController {
         },
     })
     @ApiResponse({
+        status:500,
+        description: 'Internal Server Error',
+        schema: {
+            example: {
+                "message": "Internal server error",
+                "error": "Internal Server Error",
+                "statusCode": 500
+            }
+        },
+    })
+    @ApiResponse({
         status: 201,
         description: 'Login successful',
         schema: {
