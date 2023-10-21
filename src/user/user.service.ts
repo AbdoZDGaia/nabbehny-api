@@ -4,7 +4,6 @@ import { User } from './shemas/user.shema';
 import { Model } from 'mongoose';
 import { UserCreateDto } from './dto/user.create.dto';
 import { UserResponseDto } from './dto/user.response.dto';
-import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UserService {
@@ -14,23 +13,21 @@ export class UserService {
     ) { }
 
     async create(user: UserCreateDto): Promise<UserResponseDto> {
-        const userToBeCreated: User = new User()
-        userToBeCreated.firstName = user.firstName
-        userToBeCreated.lastName = user.lastName
-        userToBeCreated.email = user.email
-        userToBeCreated.password = await bcrypt.hash(user.password, 10)
-        userToBeCreated.roles = user.roles
-        userToBeCreated.createdAt = new Date()
+        const userToBeCreated = User.createFromDto(user);
 
         const createdUser = new this.userModel(userToBeCreated);
         await createdUser.save();
-        const { password, createdAt, ...userResult } = createdUser.toJSON();
+
+        const userResult = User.convertToUserResponseDto(createdUser);
         return userResult;
     }
 
     async update(id: string, user: User): Promise<UserResponseDto> {
         const updatedUser = await this.userModel.findByIdAndUpdate(id, user, { new: true });
-        const { password, createdAt, ...userResult } = updatedUser.toJSON();
+        if (!updatedUser) {
+            return null;
+        }
+        const userResult = User.convertToUserResponseDto(updatedUser);
         return userResult;
     }
 
@@ -38,19 +35,22 @@ export class UserService {
         const usersResult: UserResponseDto[] = [];
         const users = await this.userModel.find().exec();
         users.forEach(user => {
-            const { password, createdAt, ...result } = user.toJSON();
-            usersResult.push(result);
-        })
+            const userResult = User.convertToUserResponseDto(user);
+            usersResult.push(userResult);
+        });
         return usersResult;
     }
 
     async findOne(id: string): Promise<UserResponseDto> {
         const userFound = await this.userModel.findById({ _id: id }).exec();
-        const { password, createdAt, ...userResult } = userFound.toJSON();
+        if (!userFound) {
+            return null;
+        }
+        const userResult = User.convertToUserResponseDto(userFound);
         return userResult;
     }
 
-    async findAuthUserByemail(email: string) {
+    async findAuthUserByemail(email: string): Promise<User> {
         return await this.userModel.findOne({ email }).exec();
     }
 }
