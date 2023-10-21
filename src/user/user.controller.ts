@@ -33,7 +33,7 @@ export class UserController {
     async getUserById(@Param('id') id: string): Promise<UserResponseDto> {
         var user = await this.userService.findOne(id);
         if (!user) {
-            throw new NotFoundException('User not found');
+            throw new NotFoundException(`User with id '${id}' was not found`);
         }
         return user;
     }
