@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { UserCreateDto } from '../dto/user.create.dto';
 import * as bcrypt from 'bcryptjs';
 import { UserResponseDto } from '../dto/user.response.dto';
+import { RegisterDto } from 'src/auth/dto/register.dto';
 
 export type UserDocument = HydratedDocument<User>;
 
