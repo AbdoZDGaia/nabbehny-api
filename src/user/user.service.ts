@@ -40,7 +40,8 @@ export class UserService {
         if (!updatedUser) {
             return null;
         }
-        return updatedUser;
+        const userResult = User.convertToUserResponseDto(updatedUser);
+        return userResult;
     }
 
     async findAll(): Promise<UserResponseDto[]> {
