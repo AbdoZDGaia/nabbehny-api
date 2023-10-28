@@ -34,7 +34,6 @@ export class User {
         return userResult;
     }
 
-
     @Prop({ default: uuidv4, type: String })
     _id: string;
 
