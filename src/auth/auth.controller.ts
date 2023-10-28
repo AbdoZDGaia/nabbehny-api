@@ -87,7 +87,7 @@ export class AuthController {
         description: 'Bad Request',
         schema: {
             example: {
-                "message": Constants.REGISTER.USER_ALREADY_EXISTS,
+                "message": Constants.AUTH.USER_ALREADY_EXISTS,
                 "error": "Bad Request",
                 "statusCode": 400
             }
@@ -114,15 +114,7 @@ export class AuthController {
         status: 201,
         description: 'Password reset successful',
         schema: {
-            example: {
-                "_id": "5f2d3e5d-8e2a-4b2a-8b7f-6f5e7c3f5e7c",
-                "firstName": "John",
-                "lastName": "Doe",
-                "email": "john@doe.com",
-                "roles": [
-                    "user"
-                ],
-            }
+            example: Constants.RESET_PASSWORD.SUCCESSFUL,
         },
     })
     @ApiResponse({
@@ -130,14 +122,14 @@ export class AuthController {
         description: 'Not Found',
         schema: {
             example: {
-                "message": Constants.RESET_PASSWORD.USER_NOT_FOUND,
+                "message": Constants.USER.USER_NOT_FOUND,
                 "error": "Not Found",
                 "statusCode": 404
             }
         },
     })
     @Post('reset-password')
-    async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<UserResponseDto> {
+    async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<string> {
         return this.authService.resetPassword(resetPasswordDto);
     }
 }
