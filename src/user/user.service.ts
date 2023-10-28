@@ -4,6 +4,8 @@ import { User } from './shemas/user.shema';
 import { Model } from 'mongoose';
 import { UserCreateDto } from './dto/user.create.dto';
 import { UserResponseDto } from './dto/user.response.dto';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
+import Constants from 'src/shared/constants';
 
 @Injectable()
 export class UserService {
@@ -25,22 +27,21 @@ export class UserService {
     async update(id: string, user: User): Promise<UserResponseDto> {
         const updatedUser = await this.userModel.findByIdAndUpdate(id, user, { new: true });
         if (!updatedUser) {
-            return null;
+            throw new NotFoundException(Constants.USER.USER_NOT_FOUND);
         }
         const userResult = User.convertToUserResponseDto(updatedUser);
         return userResult;
     }
 
-    async updatePassword(id: string, newPassword: string): Promise<UserResponseDto> {
+    async updatePassword(id: string, newPassword: string): Promise<void> {
         const userFound = this.userModel.findById(id).exec();
         if (!userFound) {
-            return null;
+            throw new NotFoundException(Constants.USER.USER_NOT_FOUND);
         }
         const updatedUser = await this.userModel.findByIdAndUpdate(id, { $set: { password: newPassword } }, { new: true });
         if (!updatedUser) {
-            return null;
+            throw new BadRequestException(Constants.AUTH.ERROR_UPDATING_PASSWORD);
         }
-        return updatedUser;
     }
 
     async findAll(): Promise<UserResponseDto[]> {
@@ -56,13 +57,17 @@ export class UserService {
     async findOne(id: string): Promise<UserResponseDto> {
         const userFound = await this.userModel.findById({ _id: id }).exec();
         if (!userFound) {
-            return null;
+            throw new NotFoundException(Constants.USER.USER_NOT_FOUND);
         }
         const userResult = User.convertToUserResponseDto(userFound);
         return userResult;
     }
 
     async findAuthUserByemail(email: string): Promise<User> {
-        return await this.userModel.findOne({ email }).exec();
+        const userFound = await this.userModel.findOne({ email }).exec();
+        if (!userFound) {
+            throw new NotFoundException(Constants.USER.USER_NOT_FOUND);
+        }
+        return userFound;
     }
 }

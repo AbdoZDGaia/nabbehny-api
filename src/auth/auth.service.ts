@@ -22,7 +22,7 @@ export class AuthService {
             const result = User.convertToUserResponseDto(user);
             return result;
         }
-        throw new BadRequestException(Constants.LOGIN.INVALID_CREDENTIALS);
+        throw new BadRequestException(Constants.AUTH.INVALID_CREDENTIALS);
     }
 
     async login(user: any): Promise<{ access_token: string }> {
@@ -35,25 +35,22 @@ export class AuthService {
     async register(registerDto: RegisterDto): Promise<UserResponseDto> {
         const userFound = await this.userService.findAuthUserByemail(registerDto.email);
         if (userFound) {
-            throw new BadRequestException(Constants.REGISTER.USER_ALREADY_EXISTS);
+            throw new BadRequestException(Constants.AUTH.USER_ALREADY_EXISTS);
         }
         const userToBeCreated = UserCreateDto.mapFromRegisterDto(registerDto);
         const createdUser = await this.userService.create(userToBeCreated);
         return createdUser;
     }
 
-    async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<UserResponseDto> {
+    async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<string> {
         const { email, newPassword } = resetPasswordDto;
         const userFound = await this.userService.findAuthUserByemail(email);
         if (!userFound) {
-            throw new NotFoundException(Constants.RESET_PASSWORD.USER_NOT_FOUND);
+            throw new NotFoundException(Constants.USER.USER_NOT_FOUND);
         }
 
         const hashedPassword = bcrypt.hashSync(newPassword, 10);
-        const updatedUser = await this.userService.updatePassword(userFound._id, hashedPassword);
-        if (!updatedUser) {
-            throw new BadRequestException(Constants.RESET_PASSWORD.ERROR_UPDATING_PASSWORD);
-        }
-        return updatedUser;
+        await this.userService.updatePassword(userFound._id, hashedPassword);
+        return Constants.RESET_PASSWORD.SUCCESSFUL;
     }
 }
