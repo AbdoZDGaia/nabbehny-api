@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcryptjs';
@@ -7,6 +7,7 @@ import { User } from 'src/user/shemas/user.shema';
 import { RegisterDto } from './dto/register.dto';
 import { UserCreateDto } from 'src/user/dto/user.create.dto';
 import Constants from 'src/shared/constants';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +22,7 @@ export class AuthService {
             const result = User.convertToUserResponseDto(user);
             return result;
         }
-        return null;
+        throw new BadRequestException(Constants.LOGIN.INVALID_CREDENTIALS);
     }
 
     async login(user: any): Promise<{ access_token: string }> {
@@ -39,5 +40,20 @@ export class AuthService {
         const userToBeCreated = UserCreateDto.mapFromRegisterDto(registerDto);
         const createdUser = await this.userService.create(userToBeCreated);
         return createdUser;
+    }
+
+    async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<UserResponseDto> {
+        const { email, newPassword } = resetPasswordDto;
+        const userFound = await this.userService.findAuthUserByemail(email);
+        if (!userFound) {
+            throw new NotFoundException(Constants.RESET_PASSWORD.USER_NOT_FOUND);
+        }
+
+        const hashedPassword = bcrypt.hashSync(newPassword, 10);
+        const updatedUser = await this.userService.updatePassword(userFound._id, hashedPassword);
+        if (!updatedUser) {
+            throw new BadRequestException(Constants.RESET_PASSWORD.ERROR_UPDATING_PASSWORD);
+        }
+        return updatedUser;
     }
 }

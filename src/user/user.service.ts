@@ -31,6 +31,18 @@ export class UserService {
         return userResult;
     }
 
+    async updatePassword(id: string, newPassword: string): Promise<UserResponseDto> {
+        const userFound = this.userModel.findById(id).exec();
+        if (!userFound) {
+            return null;
+        }
+        const updatedUser = await this.userModel.findByIdAndUpdate(id, { $set: { password: newPassword } }, { new: true });
+        if (!updatedUser) {
+            return null;
+        }
+        return updatedUser;
+    }
+
     async findAll(): Promise<UserResponseDto[]> {
         const usersResult: UserResponseDto[] = [];
         const users = await this.userModel.find().exec();

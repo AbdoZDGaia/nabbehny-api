@@ -7,6 +7,7 @@ import { Public } from 'src/shared/public.decorator';
 import { RegisterDto } from './dto/register.dto';
 import { UserResponseDto } from 'src/user/dto/user.response.dto';
 import Constants from 'src/shared/constants';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Public()
 @ApiTags('Auth')
@@ -96,5 +97,47 @@ export class AuthController {
     async register(@Body() registerDto: RegisterDto): Promise<UserResponseDto> {
         const registeredUser = this.authService.register(registerDto);
         return registeredUser;
+    }
+
+    @ApiResponse({
+        status: 500,
+        description: 'Internal Server Error',
+        schema: {
+            example: {
+                "message": "Internal server error",
+                "error": "Internal Server Error",
+                "statusCode": 500
+            }
+        },
+    })
+    @ApiResponse({
+        status: 201,
+        description: 'Password reset successful',
+        schema: {
+            example: {
+                "_id": "5f2d3e5d-8e2a-4b2a-8b7f-6f5e7c3f5e7c",
+                "firstName": "John",
+                "lastName": "Doe",
+                "email": "john@doe.com",
+                "roles": [
+                    "user"
+                ],
+            }
+        },
+    })
+    @ApiResponse({
+        status: 404,
+        description: 'Not Found',
+        schema: {
+            example: {
+                "message": Constants.RESET_PASSWORD.USER_NOT_FOUND,
+                "error": "Not Found",
+                "statusCode": 404
+            }
+        },
+    })
+    @Post('reset-password')
+    async resetPassword(@Body() resetPasswordDto: ResetPasswordDto): Promise<UserResponseDto> {
+        return this.authService.resetPassword(resetPasswordDto);
     }
 }
